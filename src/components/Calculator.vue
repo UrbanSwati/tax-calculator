@@ -77,6 +77,14 @@ export default {
           incomeBase: [0, 188000, 293600, 406400, 550100, 701300],
           ageRangeTaxRebate: [13500, 7407, 2466],
           ageRangeTaxThresholds: [75000, 116150, 129850]
+        },
+        {
+          year: 2018,
+          rateTax: [18, 26, 31, 36, 39, 41, 45],
+          taxableAmnt: [0, 34178, 61910, 97225, 149475, 209032, 533625],
+          incomeBase: [0, 189880, 296540, 410460, 555600, 708310, 1500000],
+          ageRangeTaxRebate: [13635, 7479, 2493],
+          ageRangeTaxThresholds: [75750, 117300, 131150]
         }
       ]
     };
@@ -93,33 +101,29 @@ export default {
       let taxableAmnt = 0;
       let incomeBase = 0;
 
-      if (salary < this.yearData[year].incomeBase[1]) {
-        taxRate = this.yearData[year].rateTax[0];
-        taxableAmnt = this.yearData[year].taxableAmnt[0];
-        incomeBase = this.yearData[year].incomeBase[0];
-      } else if (salary < this.yearData[year].incomeBase[2]) {
-        taxRate = this.yearData[year].rateTax[1];
-        taxableAmnt = this.yearData[year].taxableAmnt[1];
-        incomeBase = this.yearData[year].incomeBase[1];
-      } else if (salary < this.yearData[year].incomeBase[3]) {
-        taxRate = this.yearData[year].rateTax[2];
-        taxableAmnt = this.yearData[year].taxableAmnt[2];
-        incomeBase = this.yearData[year].incomeBase[2];
-      } else if (salary < this.yearData[year].incomeBase[4]) {
-        taxRate = this.yearData[year].rateTax[3];
-        taxableAmnt = this.yearData[year].taxableAmnt[3];
-        incomeBase = this.yearData[year].incomeBase[3];
-      } else if (salary < this.yearData[year].incomeBase[5]) {
-        taxRate = this.yearData[year].rateTax[4];
-        taxableAmnt = this.yearData[year].taxableAmnt[4];
-        incomeBase = this.yearData[year].incomeBase[4];
-      } else {
-        taxRate = this.yearData[year].rateTax[5];
-        taxableAmnt = this.yearData[year].taxableAmnt[5];
-        incomeBase = this.yearData[year].incomeBase[5];
+      let found = false;
+      let index = 0;
+      while(!found){
+        
+        if(salary < this.yearData[year].incomeBase[index + 1]){
+          taxRate = this.yearData[year].rateTax[index];
+          taxableAmnt = this.yearData[year].taxableAmnt[index];
+          incomeBase = this.yearData[year].incomeBase[index];
+          found = true;
+        }
+
+        index+= 1;
+        if(index > this.yearData[year].incomeBase.length){
+          let length = this.yearData[year].rateTax.length;
+          taxRate = this.yearData[year].rateTax[length - 1];
+          taxableAmnt = this.yearData[year].taxableAmnt[length - 1];
+          incomeBase = this.yearData[year].incomeBase[length - 1];
+          found = true;
+        }
       }
 
       return (salary - incomeBase) * (taxRate / 100) + taxableAmnt;
+     
     },
     getYearIndex(year) {
       let index = 0;
