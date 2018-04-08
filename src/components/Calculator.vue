@@ -8,7 +8,7 @@
             <label class="col-sm-8 col-form-label">Which tax year would you like to calculate?</label>
             <div class="col-sm-4">
               <select class="form-control form-control-sm" v-model="selectedYear">
-                <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
+                <option v-for="year in yearData" :key="year.year" :value="year.year">{{ year.year }}</option>
               </select>
             </div>
           </div>
@@ -61,23 +61,80 @@
 
 <script>
 export default {
-  data (){
+  data() {
     return {
-      years: [2017, 2018],
       selectedYear: 2017,
-      payPeriods: ['Monthly','Annualy'],
-      selectedPayPeriod: 'Monthly',
+      payPeriods: ["Monthly", "Annualy"],
+      selectedPayPeriod: "Monthly",
       salary: 0,
       age: 18,
-      dependents: 0
-    }
+      dependents: 0,
+      yearData: [
+        {
+          year: 2017,
+          rateTax: [18, 26, 31, 36, 39, 41],
+          taxableAmnt: [0, 33840, 61296, 96264, 147996, 206964],
+          incomeBase: [0, 188000, 293600, 406400, 550100, 701300],
+          ageRangeTaxRebate: [13500, 7407, 2466],
+          ageRangeTaxThresholds: [75000, 116150, 129850]
+        }
+      ]
+    };
   },
-  methods:{
-    calculateTax(){
-      console.log('button clicked');
+  methods: {
+    calculateTax() {
+      console.log("button clicked");
+      let tax = this.taxBracket(Number(this.salary), this.getYearIndex(this.selectedYear));
+      console.log('answer: ', tax);
+      
+    },
+    taxBracket(salary, year) {
+      let taxRate = 0;
+      let taxableAmnt = 0;
+      let incomeBase = 0;
+
+      if (salary < this.yearData[year].incomeBase[1]) {
+        taxRate = this.yearData[year].rateTax[0];
+        taxableAmnt = this.yearData[year].taxableAmnt[0];
+        incomeBase = this.yearData[year].incomeBase[0];
+      } else if (salary < this.yearData[year].incomeBase[2]) {
+        taxRate = this.yearData[year].rateTax[1];
+        taxableAmnt = this.yearData[year].taxableAmnt[1];
+        incomeBase = this.yearData[year].incomeBase[1];
+      } else if (salary < this.yearData[year].incomeBase[3]) {
+        taxRate = this.yearData[year].rateTax[2];
+        taxableAmnt = this.yearData[year].taxableAmnt[2];
+        incomeBase = this.yearData[year].incomeBase[2];
+      } else if (salary < this.yearData[year].incomeBase[4]) {
+        taxRate = this.yearData[year].rateTax[3];
+        taxableAmnt = this.yearData[year].taxableAmnt[3];
+        incomeBase = this.yearData[year].incomeBase[3];
+      } else if (salary < this.yearData[year].incomeBase[5]) {
+        taxRate = this.yearData[year].rateTax[4];
+        taxableAmnt = this.yearData[year].taxableAmnt[4];
+        incomeBase = this.yearData[year].incomeBase[4];
+      } else {
+        taxRate = this.yearData[year].rateTax[5];
+        taxableAmnt = this.yearData[year].taxableAmnt[5];
+        incomeBase = this.yearData[year].incomeBase[5];
+      }
+
+      return (salary - incomeBase) * (taxRate / 100) + taxableAmnt;
+    },
+    getYearIndex(year) {
+      let index = 0;
+
+      for (let i = 0; i < this.yearData.length; i++) {
+        const element = this.yearData[i];
+        if (element.year == year) {
+          index = i;
+          break;
+        }
+      }
+      return index;
     }
   }
-}
+};
 </script>
 
 <style>
