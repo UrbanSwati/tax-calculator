@@ -48,7 +48,7 @@
   <br>
            <div class="form-row">
              <div class="col">
-             <button class="btn btn-primary btn-block">Submit</button>
+             <button class="btn btn-primary btn-block" @click.prevent="calculateTax">Submit</button>
              </div>
            </div>
 
@@ -70,6 +70,11 @@ export default {
       salary: 0,
       age: 18,
       dependents: 0
+    }
+  },
+  methods:{
+    calculateTax(){
+      console.log('button clicked');
     }
   }
 }
