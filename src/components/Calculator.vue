@@ -91,10 +91,17 @@ export default {
   },
   methods: {
     calculateTax() {
-      console.log("button clicked");
-      let tax = this.taxBracket(Number(this.salary), this.getYearIndex(this.selectedYear));
-      console.log('answer: ', tax);
       
+      let yearIndex =  this.getYearIndex(this.selectedYear);
+      let inputSalary = Number(this.salary);
+      if(this.selectedPayPeriod == 'Monthly'){
+        inputSalary = inputSalary * 12;
+      }
+      let tax = this.taxBracket(inputSalary, yearIndex);
+      let rebate = this.calculateRebate(Number(this.age), yearIndex);
+
+      let total = (tax - rebate) / 12;
+    
     },
     taxBracket(salary, year) {
       let taxRate = 0;
@@ -113,8 +120,9 @@ export default {
         }
 
         index+= 1;
-        if(index > this.yearData[year].incomeBase.length){
-          let length = this.yearData[year].rateTax.length;
+        let length = this.yearData[year].rateTax.length;
+
+        if(index > length){
           taxRate = this.yearData[year].rateTax[length - 1];
           taxableAmnt = this.yearData[year].taxableAmnt[length - 1];
           incomeBase = this.yearData[year].incomeBase[length - 1];
@@ -136,6 +144,31 @@ export default {
         }
       }
       return index;
+    },
+    calculateRebate(age, year){
+      let index = 0;
+      let taxRebateAmnt = 0;
+
+      const AGE_CLASS_ONE = 65;
+      const AGE_CLASS_TWO = 75;
+
+       
+      if(age < AGE_CLASS_ONE){
+        index = 0;
+      }else if(age > AGE_CLASS_ONE && age < AGE_CLASS_TWO){
+        index = 1;
+      }else if( age > AGE_CLASS_TWO){
+        index = 2;
+      }
+
+      taxRebateAmnt = this.yearData[year].ageRangeTaxRebate[index];
+      
+      if(this.yearData[year].ageRangeTaxRebate[index - 1]){
+        taxRebateAmnt += this.yearData[year].ageRangeTaxRebate[index - 1];
+      }
+
+      return taxRebateAmnt;
+
     }
   }
 };
