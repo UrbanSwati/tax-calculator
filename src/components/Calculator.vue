@@ -2,14 +2,13 @@
   <div>
     <div class="row">
       <div class="col-md-6 offset-md-3">
-
         <form>
 
           <div class="form-row">
             <label class="col-sm-8 col-form-label">Which tax year would you like to calculate?</label>
             <div class="col-sm-4">
-              <select class="form-control form-control-sm">
-                <option v-for="year in years" :key="year">{{ year }}</option>
+              <select class="form-control form-control-sm" v-model="selectedYear">
+                <option v-for="year in years" :key="year" :value="year">{{ year }}</option>
               </select>
             </div>
           </div>
@@ -19,7 +18,7 @@
             <div class="col-sm-4">
               <div class="input-group-prepend">
                 <div class="input-group-text">R</div>
-              <input type="number" class="form-control" id="inlineFormInputGroup" placeholder="Salary">
+              <input type="number" class="form-control" id="inlineFormInputGroup" v-model="salary" placeholder="Salary">
               </div>
             </div>
           </div>
@@ -27,8 +26,8 @@
           <div class="form-row">
             <label class="col-sm-8 col-form-label">How often do you receive this salary? </label>
             <div class="col-sm-4">
-              <select class="form-control form-control-sm">
-                <option v-for="period in payPeriods" :key="period">{{ period }}</option>
+              <select class="form-control form-control-sm" v-model="selectedPayPeriod">
+                <option v-for="period in payPeriods" :key="period" :value="period" >{{ period }}</option>
               </select>
             </div>
           </div>
@@ -55,7 +54,6 @@
 
         </form>
 
-
       </div>
     </div>
   </div>
@@ -66,7 +64,10 @@ export default {
   data (){
     return {
       years: [2017, 2018],
+      selectedYear: 2017,
       payPeriods: ['Monthly','Annualy'],
+      selectedPayPeriod: 'Monthly',
+      salary: 0,
       age: 18,
       dependents: 0
     }
