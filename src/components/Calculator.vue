@@ -64,8 +64,8 @@ export default {
   data() {
     return {
       selectedYear: 2017,
-      payPeriods: ["Monthly", "Annualy"],
-      selectedPayPeriod: "Monthly",
+      payPeriods: ['Monthly', 'Annualy'],
+      selectedPayPeriod: 'Monthly',
       salary: 0,
       age: 18,
       dependents: 0,
@@ -76,7 +76,7 @@ export default {
           taxableAmnt: [0, 33840, 61296, 96264, 147996, 206964],
           incomeBase: [0, 188000, 293600, 406400, 550100, 701300],
           ageRangeTaxRebate: [13500, 7407, 2466],
-          ageRangeTaxThresholds: [75000, 116150, 129850]
+          ageRangeTaxThresholds: [75000, 116150, 129850],
         },
         {
           year: 2018,
@@ -84,24 +84,23 @@ export default {
           taxableAmnt: [0, 34178, 61910, 97225, 149475, 209032, 533625],
           incomeBase: [0, 189880, 296540, 410460, 555600, 708310, 1500000],
           ageRangeTaxRebate: [13635, 7479, 2493],
-          ageRangeTaxThresholds: [75750, 117300, 131150]
-        }
-      ]
+          ageRangeTaxThresholds: [75750, 117300, 131150],
+        },
+      ],
     };
   },
   methods: {
     calculateTax() {
-      
-      let yearIndex =  this.getYearIndex(this.selectedYear);
+      let yearIndex = this.getYearIndex(this.selectedYear);
       let inputSalary = Number(this.salary);
-      if(this.selectedPayPeriod == 'Monthly'){
+      if (this.selectedPayPeriod == 'Monthly') {
         inputSalary = inputSalary * 12;
       }
       let tax = this.taxBracket(inputSalary, yearIndex);
       let rebate = this.calculateRebate(Number(this.age), yearIndex);
 
       let total = (tax - rebate) / 12;
-    
+      alert('The total is ' + total);
     },
     taxBracket(salary, year) {
       let taxRate = 0;
@@ -110,19 +109,18 @@ export default {
 
       let found = false;
       let index = 0;
-      while(!found){
-        
-        if(salary < this.yearData[year].incomeBase[index + 1]){
+      while (!found) {
+        if (salary < this.yearData[year].incomeBase[index + 1]) {
           taxRate = this.yearData[year].rateTax[index];
           taxableAmnt = this.yearData[year].taxableAmnt[index];
           incomeBase = this.yearData[year].incomeBase[index];
           found = true;
         }
 
-        index+= 1;
+        index += 1;
         let length = this.yearData[year].rateTax.length;
 
-        if(index > length){
+        if (index > length) {
           taxRate = this.yearData[year].rateTax[length - 1];
           taxableAmnt = this.yearData[year].taxableAmnt[length - 1];
           incomeBase = this.yearData[year].incomeBase[length - 1];
@@ -131,46 +129,41 @@ export default {
       }
 
       return (salary - incomeBase) * (taxRate / 100) + taxableAmnt;
-     
     },
     getYearIndex(year) {
       let index = 0;
-
-      for (let i = 0; i < this.yearData.length; i++) {
-        const element = this.yearData[i];
-        if (element.year == year) {
+      this.yearData.forEach((data, i) => {
+        if (data.year === year) {
           index = i;
-          break;
         }
-      }
+      });
+
       return index;
     },
-    calculateRebate(age, year){
+    calculateRebate(age, year) {
       let index = 0;
       let taxRebateAmnt = 0;
 
       const AGE_CLASS_ONE = 65;
       const AGE_CLASS_TWO = 75;
 
-       
-      if(age < AGE_CLASS_ONE){
+      if (age < AGE_CLASS_ONE) {
         index = 0;
-      }else if(age > AGE_CLASS_ONE && age < AGE_CLASS_TWO){
+      } else if (age > AGE_CLASS_ONE && age < AGE_CLASS_TWO) {
         index = 1;
-      }else if( age > AGE_CLASS_TWO){
+      } else if (age > AGE_CLASS_TWO) {
         index = 2;
       }
 
       taxRebateAmnt = this.yearData[year].ageRangeTaxRebate[index];
-      
-      if(this.yearData[year].ageRangeTaxRebate[index - 1]){
+
+      if (this.yearData[year].ageRangeTaxRebate[index - 1]) {
         taxRebateAmnt += this.yearData[year].ageRangeTaxRebate[index - 1];
       }
 
       return taxRebateAmnt;
-
-    }
-  }
+    },
+  },
 };
 </script>
 
