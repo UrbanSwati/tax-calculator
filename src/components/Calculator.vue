@@ -107,24 +107,27 @@ export default {
       let taxableAmnt = 0;
       let incomeBase = 0;
 
-      let found = false;
+      let isFound = false;
       let index = 0;
-      while (!found) {
-        if (salary < this.yearData[year].incomeBase[index + 1]) {
-          taxRate = this.yearData[year].rateTax[index];
-          taxableAmnt = this.yearData[year].taxableAmnt[index];
-          incomeBase = this.yearData[year].incomeBase[index];
-          found = true;
+      let taxYear = this.yearData[year];
+      let length = taxYear.rateTax.length;
+
+      while (!isFound) {
+        if (salary < taxYear.incomeBase[index + 1]) {
+          taxRate = taxYear.rateTax[index];
+          taxableAmnt = taxYear.taxableAmnt[index];
+          incomeBase = taxYear.incomeBase[index];
+          isFound = true;
         }
 
         index += 1;
-        let length = this.yearData[year].rateTax.length;
+        let length = taxYear.rateTax.length;
 
         if (index > length) {
-          taxRate = this.yearData[year].rateTax[length - 1];
-          taxableAmnt = this.yearData[year].taxableAmnt[length - 1];
-          incomeBase = this.yearData[year].incomeBase[length - 1];
-          found = true;
+          taxRate = taxYear.rateTax[length - 1];
+          taxableAmnt = taxYear.taxableAmnt[length - 1];
+          incomeBase = taxYear.incomeBase[length - 1];
+          isFound = true;
         }
       }
 
